@@ -1,8 +1,10 @@
 package com.pharmacy.app;
 
+import com.pharmacy.mapper.DataMapper;
 import com.pharmacy.network.PharmacySocketServer;
 import com.pharmacy.repository.AccountRepository;
 import com.pharmacy.repository.AuthorizationRepository;
+import com.pharmacy.repository.MedicineRepository;
 import com.pharmacy.service.impl.AuthServiceImpl;
 import com.pharmacy.service.impl.MedicineServiceImpl;
 import com.pharmacy.shared.config.AppConfig;
@@ -23,9 +25,10 @@ public class ServerApp {
 
         AccountRepository accountRepository = new AccountRepository();
         AuthorizationRepository authorizationRepository = new AuthorizationRepository();
+        MedicineRepository medicineRepository = new MedicineRepository();
 
         Map<String, Object> serviceRegistry = new HashMap<>();
-        serviceRegistry.put("MedicineService", new MedicineServiceImpl());
+        serviceRegistry.put("MedicineService", new MedicineServiceImpl(medicineRepository, DataMapper.INSTANCE));
         serviceRegistry.put("AuthService", new AuthServiceImpl(accountRepository, authorizationRepository));
 
         log.info("Loading network configuration.");

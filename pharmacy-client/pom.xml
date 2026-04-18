@@ -37,6 +37,83 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- MigLayout core -->
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-core</artifactId>
+            <version>11.4</version>
+        </dependency>
+
+        <!-- MigLayout Swing -->
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+            <version>11.4</version>
+        </dependency>
+
+        <!-- Modal-Dialog -->
+        <dependency>
+            <groupId>io.github.dj-raven</groupId>
+            <artifactId>modal-dialog</artifactId>
+            <version>2.5.2</version>
+        </dependency>
+
+        <!-- Flatlaf Core -->
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.5.4</version>
+        </dependency>
+
+        <!-- Flatlaf Extras -->
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+            <version>3.5.2</version>
+        </dependency>
+
+        <!-- Flatlaf Font Roboto -->
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-fonts-roboto</artifactId>
+            <version>2.137</version>
+        </dependency>
+
+        <!-- JCalendar for choose date -->
+        <dependency>
+            <groupId>com.toedter</groupId>
+            <artifactId>jcalendar</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <!-- Google zxing core -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
+        <!-- Google zxing javase -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
+        <!-- JFreeChart -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.5.3</version>
+        </dependency>
+
+        <!-- Timing Framework -->
+        <dependency>
+            <groupId>com.timingframework</groupId>
+            <artifactId>timingframework</artifactId>
+            <version>0.55</version>
+        </dependency>
+
     </dependencies>
 
 </project>

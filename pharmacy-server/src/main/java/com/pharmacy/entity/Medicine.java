@@ -1,6 +1,6 @@
 package com.pharmacy.entity;
 
-import com.pharmacy.entity.enums.MedicineType;
+import com.pharmacy.shared.util.enums.MedicineType;
 import jakarta.persistence.*;
 import lombok.*;
 
