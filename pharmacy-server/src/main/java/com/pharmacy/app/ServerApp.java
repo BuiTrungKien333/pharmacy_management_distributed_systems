@@ -4,8 +4,10 @@ import com.pharmacy.mapper.DataMapper;
 import com.pharmacy.network.PharmacySocketServer;
 import com.pharmacy.repository.AccountRepository;
 import com.pharmacy.repository.AuthorizationRepository;
+import com.pharmacy.repository.DashboardRepository;
 import com.pharmacy.repository.MedicineRepository;
 import com.pharmacy.service.impl.AuthServiceImpl;
+import com.pharmacy.service.impl.DashboardServiceImpl;
 import com.pharmacy.service.impl.MedicineServiceImpl;
 import com.pharmacy.shared.config.AppConfig;
 import com.pharmacy.util.HibernateUtil;
@@ -27,10 +29,12 @@ public class ServerApp {
         AccountRepository accountRepository = new AccountRepository();
         AuthorizationRepository authorizationRepository = new AuthorizationRepository();
         MedicineRepository medicineRepository = new MedicineRepository();
+        DashboardRepository dashboardRepository = new DashboardRepository();
 
         Map<String, Object> serviceRegistry = new HashMap<>();
         serviceRegistry.put("MedicineService", new MedicineServiceImpl(medicineRepository, DataMapper.INSTANCE));
         serviceRegistry.put("AuthService", new AuthServiceImpl(accountRepository, authorizationRepository));
+        serviceRegistry.put("DashboardService", new DashboardServiceImpl(dashboardRepository));
 
         log.info("Loading network configuration.");
         int port = AppConfig.getInt("server.port");
