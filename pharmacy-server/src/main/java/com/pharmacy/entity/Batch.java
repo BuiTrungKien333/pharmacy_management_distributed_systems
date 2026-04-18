@@ -1,6 +1,6 @@
 package com.pharmacy.entity;
 
-import com.pharmacy.entity.enums.BatchStatus;
+import com.pharmacy.shared.util.enums.BatchStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,7 +1,7 @@
 package com.pharmacy.entity;
 
 
-import com.pharmacy.entity.enums.Gender;
+import com.pharmacy.shared.util.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 

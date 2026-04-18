@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
@@ -66,10 +67,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean verifyOTP(String username, String otp) {
-        if (otp == null || otp.isBlank()) {
-            throw new IllegalArgumentException("OTP không được để trống");
-        }
-
         return JpaTransactionTemplate.execute(em -> {
             Account account = accountRepository.findByUsernameAndOtp(em, username, otp, LocalDateTime.now());
 
@@ -84,10 +81,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean changePassword(String username, String password) {
-        if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Mật khẩu không được để trống");
-        }
-
         return JpaTransactionTemplate.execute(em -> {
             Account account = accountRepository.findByUsername(em, username);
             if (account == null) {
@@ -106,7 +99,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean login(String username, String password) {
         if (username == null || password == null || username.isBlank())
-            throw new IllegalArgumentException("Username, password not null or empty");
+            throw new IllegalArgumentException("Username hoặc password không được để trống.");
 
         return JpaTransactionTemplate.execute(em -> {
             Account account = accountRepository.findByUsername(em, username.trim());
@@ -132,5 +125,13 @@ public class AuthServiceImpl implements AuthService {
 
             return true;
         });
+    }
+
+    @Override
+    public Set<String> getCurrentPermissions() {
+        if (!SecurityContextHolder.isAuthenticated()) {
+            throw new SecurityException("Unauthorized: You must login first.");
+        }
+        return new HashSet<>(SecurityContextHolder.getPermissions());
     }
 }
