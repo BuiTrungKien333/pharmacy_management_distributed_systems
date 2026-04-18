@@ -1,4 +1,6 @@
 package com.pharmacy.view.medicine;
 
-public class MedicineUI {
+import javax.swing.*;
+
+public class MedicineUI extends JPanel {
 }

@@ -3,7 +3,11 @@ package com.pharmacy.view;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.util.UIScale;
+import com.pharmacy.app.ClientApp;
+import com.pharmacy.util.ClientSecurityContext;
+import com.pharmacy.util.Translator;
 import com.pharmacy.view.batch.BatchUI;
+import com.pharmacy.view.dashboard.DashBoardUI;
 import com.pharmacy.view.invoice.InvoiceUI;
 import com.pharmacy.view.medicine.MedicineUI;
 import com.pharmacy.view.menu.Menu;
@@ -76,38 +80,27 @@ public class MainUI extends JLayeredPane {
     private void initMenuEvent() {
         menu.addMenuEvent((int index, int subIndex, MenuAction action) -> {
             switch (index) {
-//                case 0 -> {
-//                    ClientApp.showForm(new DashBoardUI());
-//                }
-//                case 1 -> {
-//                    if (!Auth.hasPermission("SALE_ACCESS"))
-//                        return;
-//
-//                    if (sell == null)
-//                        sell = new SellGUI();
-//
-//                    ClientApp.showForm(sell);
-//                }
-//                case 2 -> {
-//                    if (!Auth.hasPermission("RETURN_ACCESS"))
-//                        return;
-//
-//                    if (refund == null)
-//                        refund = new ReturnProductGUI();
-//
-//                    ClientApp.showForm(refund);
-//                }
-//                case 3 -> {
-//                    if (!Auth.hasPermission("PRODUCT_VIEW"))
-//                        return;
-//
-//                    if (product == null)
-//                        product = new ProductGUI();
+                case 0 -> ClientApp.showForm(new DashBoardUI());
+                case 1 -> {
+                    if (sellUI == null)
+                        sellUI = new SellUI();
+
+                    ClientApp.showForm(sellUI);
+                }
+                case 2 -> {
+                    if (refundUI == null)
+                        refundUI = new RefundUI();
+
+                    ClientApp.showForm(refundUI);
+                }
+                case 3 -> {
+                    if (medicineUI == null)
+                        medicineUI = new MedicineUI();
 //                    else
-//                        product.refreshDataProd();
-//
-//                    ClientApp.showForm(product);
-//                }
+//                        medicineUI.refreshDataProd();
+
+                    ClientApp.showForm(medicineUI);
+                }
 //                case 4 -> {
 //                    if (!Auth.hasPermission("INVOICE_VIEW"))
 //                        return;
@@ -184,23 +177,23 @@ public class MainUI extends JLayeredPane {
 //
 //                    ClientApp.showForm(setting);
 //                }
-//                case 14 -> {
-//                    int confirm = JOptionPane.showConfirmDialog(this,
-//                            Translator.getInstance().getString("main.text.logout"));
-//
-//                    if (confirm == JOptionPane.YES_OPTION) {
-//                        sell = null;
-//                        refund = null;
-//                        product = null;
-//                        invoice = null;
-//                        batch = null;
-//                        report = null;
-//                        setting = null;
-//
-//                        ClientApp.logoutSuccess();
-//                        Auth.logout();
-//                    }
-//                }
+                case 14 -> {
+                    int confirm = JOptionPane.showConfirmDialog(this,
+                            Translator.getInstance().getString("main.text.logout"));
+
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        medicineUI = null;
+                        settingUI = null;
+                        reportUI = null;
+                        batchUI = null;
+                        sellUI = null;
+                        refundUI = null;
+                        invoiceUI = null;
+
+                        ClientApp.logoutSuccess();
+                        ClientSecurityContext.clear();
+                    }
+                }
                 default -> action.cancel();
             }
         });

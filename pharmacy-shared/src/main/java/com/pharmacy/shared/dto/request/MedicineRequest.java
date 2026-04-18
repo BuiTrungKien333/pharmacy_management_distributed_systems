@@ -3,6 +3,7 @@ package com.pharmacy.shared.dto.request;
 import com.pharmacy.shared.util.enums.MedicineType;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -10,7 +11,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MedicineRequest {
+public class MedicineRequest implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private String barcode;
 

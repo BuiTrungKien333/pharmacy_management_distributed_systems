@@ -1,4 +1,6 @@
 package com.pharmacy.view.sell;
 
-public class SellUI {
+import javax.swing.*;
+
+public class SellUI extends JPanel {
 }

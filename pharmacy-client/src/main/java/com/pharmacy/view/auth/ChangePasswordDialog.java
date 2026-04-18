@@ -51,11 +51,11 @@ public class ChangePasswordDialog extends JDialog {
 		pnlTitle.add(lblTitle);
 
 		JPanel pnlMa = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		lblMaNV = new JLabel("New password");
+		lblMaNV = new JLabel("Nhập mật khẩu mới");
 		pnlMa.add(lblMaNV);
 
 		JPanel pnlEmail = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		lblEmail = new JLabel("Confirm new password");
+		lblEmail = new JLabel("Xác nhận lại mật khẩu");
 		pnlEmail.add(lblEmail);
 
 		txtPass = new JPasswordField();

@@ -8,6 +8,7 @@ import com.pharmacy.network.RpcFactory;
 import com.pharmacy.network.ServerConnection;
 import com.pharmacy.shared.config.AppConfig;
 import com.pharmacy.util.ClientContext;
+import com.pharmacy.util.ClientSecurityContext;
 import com.pharmacy.view.MainUI;
 import com.pharmacy.view.auth.LoginUI;
 import com.pharmacy.view.splashscreen.SplashScreenUI;
@@ -71,6 +72,8 @@ public class ClientApp extends JFrame {
     public static void logoutSuccess() {
         log.info("User logged out. Cleaning up and returning to Login.");
 
+        ClientSecurityContext.clear();
+
         app.setSize(1000, 700);
         app.setLocationRelativeTo(null);
         app.setResizable(false);
@@ -103,6 +106,7 @@ public class ClientApp extends JFrame {
 
             ServerConnection connection = new ServerConnection();
             ClientApp[] appHolder = new ClientApp[1];
+            boolean connectedToServer = false;
 
             try {
                 splash.updateProgress("Loading Themes...", 10);
@@ -117,15 +121,15 @@ public class ClientApp extends JFrame {
                 }
 
                 splash.updateProgress("Connecting to Server...", 40);
-                String host = AppConfig.get("server.host");
-                int port = AppConfig.getInt("server.port");
+                final String host = AppConfig.get("server.host");
+                final int port = AppConfig.getInt("server.port");
                 log.info("Connecting to server -> host: {}, port: {}...", host, port);
 
                 connection.connect(host, port);
+                connectedToServer = true;
                 log.info("Connected to server successfully.");
 
                 RpcFactory rpcFactory = new RpcFactory(connection);
-
                 ClientContext.init(rpcFactory);
 
                 splash.updateProgress("Initializing Modules...", 80);
@@ -135,7 +139,7 @@ public class ClientApp extends JFrame {
                 });
 
                 splash.updateProgress("Starting Application...", 100);
-                splash.dispose();
+                SwingUtilities.invokeLater(splash::dispose);
 
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                     log.info("Shutting down Client, disconnecting from Server...");
@@ -149,18 +153,24 @@ public class ClientApp extends JFrame {
                 });
 
                 long endTime = System.currentTimeMillis() - startTime;
-                log.info("Application successfully initialized in {} ms.", endTime);
+                log.info("Application Client successfully initialized in {} ms.", endTime);
 
             } catch (Exception e) {
                 log.error("Application failed to start", e);
-                splash.dispose();
                 connection.disconnect();
+                SwingUtilities.invokeLater(splash::dispose);
 
-                JOptionPane.showMessageDialog(null,
-                        "Lỗi khởi động ứng dụng (Không thể kết nối đến Máy chủ):\n" + e.getMessage(),
-                        "Lỗi Mạng", JOptionPane.ERROR_MESSAGE);
+                String message = connectedToServer
+                        ? "Ứng dụng đã kết nối Server nhưng lỗi khi khởi tạo giao diện:\n" + e.getMessage()
+                        : "Lỗi khởi động ứng dụng (Không thể kết nối đến Máy chủ):\n" + e.getMessage();
+                String title = connectedToServer ? "Lỗi Khởi Tạo" : "Lỗi Mạng";
 
-                System.exit(1);
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
+                        null,
+                        message,
+                        title,
+                        JOptionPane.ERROR_MESSAGE
+                ));
             }
         }).start();
     }

@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ServerConnection {
 
@@ -30,33 +31,42 @@ public class ServerConnection {
     }
 
     // Shared method to send Request and receive Response
-    public synchronized Object sendRequest(String serviceName, String methodName, Class<?>[] paramTypes, Object[] args) throws Exception {
+    public synchronized Object sendRequest(String serviceName, String methodName, Class<?>[] paramTypes, Object[] args) {
         if (socket == null || socket.isClosed() || out == null || in == null) {
             throw new IllegalStateException("No connection to server!");
         }
 
-        // Package the data
-        RpcRequest request = new RpcRequest();
-        request.setServiceName(serviceName);
-        request.setMethodName(methodName);
-        request.setParameterTypes(paramTypes);
-        request.setParameters(args);
+        try {
+            RpcRequest request = new RpcRequest();
+            request.setServiceName(serviceName);
+            request.setMethodName(methodName);
+            request.setParameterTypes(paramTypes);
+            request.setParameters(args);
 
-        // Send it
-        out.writeObject(request);
-        out.flush();
+            out.writeObject(request);
+            out.flush();
 
-        // Wait for the response
-        RpcResponse response = (RpcResponse) in.readObject();
+            RpcResponse response = (RpcResponse) in.readObject();
 
-        if (response.getStatus() == 200) {
-            return response.getResult();
-        } else {
+            if (response.getStatus() == 200) {
+                return response.getResult();
+            }
+
             Exception ex = response.getException();
+            if (ex instanceof RuntimeException runtimeException) {
+                throw runtimeException;
+            }
             if (ex != null) {
-                throw ex;
+                throw new RuntimeException(ex.getMessage(), ex);
             }
             throw new RuntimeException("Unknown server error with Status Code: " + response.getStatus());
+        } catch (SocketException e) {
+            disconnect();
+            throw new RuntimeException("The connection to the server has been closed. Please try logging in again.", e);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("RPC call failed: " + methodName, e);
         }
     }
 

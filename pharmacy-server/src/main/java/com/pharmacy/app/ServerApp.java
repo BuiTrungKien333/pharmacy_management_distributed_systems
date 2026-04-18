@@ -19,6 +19,7 @@ public class ServerApp {
 
     public static void main(String[] args) {
         log.info("Starting Pharmacy Management Server.");
+        long startTime = System.currentTimeMillis();
 
         log.info("Initializing database layer (JPA EntityManagerFactory).");
         HibernateUtil.getEntityManagerFactory();
@@ -43,6 +44,9 @@ public class ServerApp {
             HibernateUtil.shutdown();
             log.info("Shutdown completed safely.");
         }));
+
+        long endTime = System.currentTimeMillis() - startTime;
+        log.info("Application Server successfully initialized in {} ms.", endTime);
 
         server.start();
     }

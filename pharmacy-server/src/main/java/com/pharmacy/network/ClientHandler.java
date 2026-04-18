@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,15 +66,30 @@ public class ClientHandler implements Runnable {
                     } catch (SecurityException se) {
                         log.warn("event=unauthorized_access clientIp={} reason={}", clientIp, se.getMessage());
                         response.setStatus(403);
-                        response.setException(se);
+                        response.setException(new SecurityException(safeMessage(se.getMessage(), "Unauthorized request.")));
                     } catch (NoSuchMethodException ne) {
                         response.setStatus(404);
                         response.setException(new RuntimeException("Method not found: " + request.getMethodName()));
                     } catch (Exception e) {
-                        log.error("event=request_handling_failed clientIp={} error={}", clientIp, e.getMessage());
-                        response.setStatus(500);
                         Throwable cause = (e.getCause() != null) ? e.getCause() : e;
-                        response.setException(new Exception(cause.getMessage()));
+                        log.error("event=request_handling_failed clientIp={} errorType={} error={}",
+                                clientIp,
+                                cause.getClass().getSimpleName(),
+                                safeMessage(cause.getMessage(), "Server error"));
+
+                        if (cause instanceof IllegalArgumentException) {
+                            response.setStatus(400);
+                            response.setException(new IllegalArgumentException(
+                                    safeMessage(cause.getMessage(), "Invalid request data.")));
+                        } else if (cause instanceof SecurityException) {
+                            response.setStatus(403);
+                            response.setException(new SecurityException(
+                                    safeMessage(cause.getMessage(), "Access denied.")));
+                        } else {
+                            response.setStatus(500);
+                            response.setException(new RuntimeException(
+                                    safeMessage(cause.getMessage(), "Internal server error.")));
+                        }
                     }
 
                     out.writeObject(response);
@@ -87,6 +103,12 @@ public class ClientHandler implements Runnable {
                 } catch (EOFException e) {
                     log.debug("event=client_eof clientIp={} clientPort={}", clientIp, clientPort);
                     break; // Client actively closed connection
+                } catch (SocketTimeoutException e) {
+                    // Idle connection: keep session alive and wait for next request.
+                    if (log.isDebugEnabled()) {
+                        log.debug("event=client_idle clientIp={} clientPort={} reason=read_timeout", clientIp, clientPort);
+                    }
+                    continue;
                 } catch (ClassNotFoundException e) {
                     log.warn("event=invalid_serialization_format clientIp={} error={}", clientIp, e.getMessage());
                     sendError(out, 400, "Invalid object format received.");
@@ -169,5 +191,9 @@ public class ClientHandler implements Runnable {
         } catch (Exception ignored) {
             // best-effort
         }
+    }
+
+    private String safeMessage(String message, String fallback) {
+        return (message == null || message.isBlank()) ? fallback : message;
     }
 }

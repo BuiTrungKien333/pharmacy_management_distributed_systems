@@ -1,4 +1,6 @@
 package com.pharmacy.view.refund;
 
-public class RefundUI {
+import javax.swing.*;
+
+public class RefundUI extends JPanel {
 }

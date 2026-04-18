@@ -22,6 +22,7 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.pharmacy.app.ClientApp;
 import com.pharmacy.shared.service.AuthService;
 import com.pharmacy.util.ClientContext;
+import com.pharmacy.util.ClientSecurityContext;
 import raven.modal.Toast;
 
 public class LoginUI extends JPanel {
@@ -173,15 +174,14 @@ public class LoginUI extends JPanel {
 
 		try {
 			authService.login(user, pass);
+			ClientSecurityContext.setPermissions(authService.getCurrentPermissions());
 
 			Arrays.fill(pass.toCharArray(), '\0');
-			pass = null;
 
 			if (currentFrame != null)
 				Toast.show(currentFrame, Toast.Type.SUCCESS, "Đăng nhập thành công");
 
 			ClientApp.loginSuccess();
-
 		} catch (IllegalArgumentException e) {
 			txtUser.requestFocus();
 
@@ -189,6 +189,16 @@ public class LoginUI extends JPanel {
 				Toast.show(currentFrame, Toast.Type.WARNING, e.getMessage());
 			else
 				JOptionPane.showMessageDialog(null, e.getMessage());
+		} catch (RuntimeException e) {
+			txtPass.requestFocus();
+			String message = (e.getMessage() == null || e.getMessage().isBlank())
+					? "Đăng nhập thất bại. Vui lòng thử lại."
+					: e.getMessage();
+
+			if (currentFrame != null && currentFrame.isDisplayable())
+				Toast.show(currentFrame, Toast.Type.ERROR, message);
+			else
+				JOptionPane.showMessageDialog(null, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

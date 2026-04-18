@@ -103,8 +103,8 @@ public class ForgotPassword extends JDialog {
 	}
 
 	private void confirm() {
-		String empId = txtMaNV.getText().trim();
-		String email = txtEmail.getText().trim();
+		String empId = txtMaNV.getText();
+		String email = txtEmail.getText();
 
 		if (empId.isEmpty() || email.isEmpty()) {
 			Toast.show(this, Toast.Type.WARNING, "Vui lòng điền đầy đủ thông tin.");
@@ -127,7 +127,6 @@ public class ForgotPassword extends JDialog {
 		JDialog loadingDialog = createLoadingDialog();
 
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-
 			@Override
 			protected Void doInBackground() throws Exception {
 				authService.forgotPassword(empId, email);
