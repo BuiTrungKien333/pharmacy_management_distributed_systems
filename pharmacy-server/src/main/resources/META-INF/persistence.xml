@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
+             version="3.2">
+    <persistence-unit name="pharmacy-pu" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <class>com.pharmacy.entity.Account</class>
+        <class>com.pharmacy.entity.BaseEntity</class>
+        <class>com.pharmacy.entity.Batch</class>
+        <class>com.pharmacy.entity.Customer</class>
+        <class>com.pharmacy.entity.CustomerRank</class>
+        <class>com.pharmacy.entity.Employee</class>
+        <class>com.pharmacy.entity.Invoice</class>
+        <class>com.pharmacy.entity.InvoiceDetail</class>
+        <class>com.pharmacy.entity.InvoiceDetailReturn</class>
+        <class>com.pharmacy.entity.InvoiceReturn</class>
+        <class>com.pharmacy.entity.Medicine</class>
+        <class>com.pharmacy.entity.Permission</class>
+        <class>com.pharmacy.entity.Role</class>
+        <class>com.pharmacy.entity.Store</class>
+        <class>com.pharmacy.entity.Supplier</class>
+        <class>com.pharmacy.entity.Voucher</class>
+
+        <properties>
+            <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
+
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>
