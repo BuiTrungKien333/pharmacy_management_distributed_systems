@@ -2,12 +2,16 @@ package com.pharmacy.shared.util;
 
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Pagination {
+public class Pagination implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int pageNumber;
 

@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DashBoardUI extends JPanel {
+public class DashboardUI extends JPanel {
 
     private DashboardService dashboardService;
 
@@ -54,7 +54,7 @@ public class DashBoardUI extends JPanel {
     private JLabel lblTitleTopSanPham;
     private JLabel lblTitleHoaDon;
 
-    public DashBoardUI() {
+    public DashboardUI() {
         dashboardService = ClientContext.getService(DashboardService.class);
         initComponents();
 

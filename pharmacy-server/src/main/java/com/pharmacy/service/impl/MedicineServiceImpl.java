@@ -119,10 +119,7 @@ public class MedicineServiceImpl implements MedicineService {
         }
 
         try {
-            return JpaTransactionTemplate.execute(em -> {
-                Medicine medicine = medicineRepository.findByBarcode(em, normalizedBarcode);
-                return medicine == null ? null : dataMapper.toMedicineResponse(medicine);
-            });
+            return JpaTransactionTemplate.execute(em -> medicineRepository.findResponseByBarcode(em, normalizedBarcode));
         } catch (Exception e) {
             log.error("event=get_medicine_by_barcode_failed barcode={} errorMessage={}", normalizedBarcode, e.getMessage(), e);
             throw new RuntimeException("Không thể lấy thông tin thuốc theo barcode.", e);
@@ -134,10 +131,9 @@ public class MedicineServiceImpl implements MedicineService {
         validatePagination(pagination);
 
         try {
-            return JpaTransactionTemplate.execute(em -> {
-                List<Medicine> medicines = medicineRepository.findAllByPage(em, pagination.getSkip(), pagination.getPageSize());
-                return dataMapper.toMedicineResponses(medicines);
-            });
+            return JpaTransactionTemplate.execute(
+                    em -> medicineRepository.findAllByPage(em, pagination.getSkip(), pagination.getPageSize())
+            );
         } catch (Exception e) {
             log.error("event=get_all_medicine_by_page_failed pagination={} errorMessage={}", pagination, e.getMessage(), e);
             throw new RuntimeException("Không thể lấy danh sách thuốc theo trang.", e);
@@ -165,16 +161,13 @@ public class MedicineServiceImpl implements MedicineService {
         validateFilter(filter);
 
         try {
-            return JpaTransactionTemplate.execute(em -> {
-                List<Medicine> medicines = medicineRepository.findFilteredByPage(
-                        em,
-                        pagination.getSkip(),
-                        pagination.getPageSize(),
-                        normalizedType,
-                        filter
-                );
-                return dataMapper.toMedicineResponses(medicines);
-            });
+            return JpaTransactionTemplate.execute(em -> medicineRepository.findFilteredByPage(
+                    em,
+                    pagination.getSkip(),
+                    pagination.getPageSize(),
+                    normalizedType,
+                    filter
+            ));
         } catch (Exception e) {
             log.error("event=get_medicine_filtered_by_type_deleted_qty_failed pagination={} medicineType={} filter={} errorMessage={}",
                     pagination, normalizedType, filter, e.getMessage(), e);
@@ -186,19 +179,16 @@ public class MedicineServiceImpl implements MedicineService {
     public List<MedicineResponse> getMedicineFilteredAndSearchByMedicineName(MedicineType medicineType, int filter, String keyword) {
         MedicineType normalizedType = normalizeMedicineType(medicineType);
         validateFilter(filter);
-        String normalizedKeyword = normalize(keyword);
+        String normalizedKeyword = normalize(keyword).toLowerCase();
 
         try {
-            return JpaTransactionTemplate.execute(em -> {
-                List<Medicine> medicines = medicineRepository.findFilteredAndSearchByName(
-                        em,
-                        normalizedType,
-                        filter,
-                        normalizedKeyword,
-                        SEARCH_LIMIT
-                );
-                return dataMapper.toMedicineResponses(medicines);
-            });
+            return JpaTransactionTemplate.execute(em -> medicineRepository.findFilteredAndSearchByName(
+                    em,
+                    normalizedType,
+                    filter,
+                    normalizedKeyword,
+                    SEARCH_LIMIT
+            ));
         } catch (Exception e) {
             log.error("event=get_medicine_filtered_and_search_name_failed medicineType={} filter={} keyword={} errorMessage={}",
                     normalizedType, filter, normalizedKeyword, e.getMessage(), e);
@@ -212,10 +202,7 @@ public class MedicineServiceImpl implements MedicineService {
         validateFilter(filter);
 
         try {
-            return JpaTransactionTemplate.execute(em -> {
-                List<Medicine> medicines = medicineRepository.findAllFiltered(em, normalizedType, filter);
-                return dataMapper.toMedicineResponses(medicines);
-            });
+            return JpaTransactionTemplate.execute(em -> medicineRepository.findAllFiltered(em, normalizedType, filter));
         } catch (Exception e) {
             log.error("event=get_all_medicine_to_export_csv_failed medicineType={} filter={} errorMessage={}",
                     normalizedType, filter, e.getMessage(), e);
@@ -258,8 +245,8 @@ public class MedicineServiceImpl implements MedicineService {
     }
 
     private void validateFilter(int filter) {
-        if (filter < 0 || filter > 4) {
-            throw new IllegalArgumentException("filter phải nằm trong khoảng từ 0 đến 4.");
+        if (filter < 0 || filter > 5) {
+            throw new IllegalArgumentException("filter phải nằm trong khoảng từ 0 đến 5.");
         }
     }
 

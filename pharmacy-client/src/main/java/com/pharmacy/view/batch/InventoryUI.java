@@ -2,5 +2,5 @@ package com.pharmacy.view.batch;
 
 import javax.swing.*;
 
-public class BatchUI extends JPanel {
+public class InventoryUI extends JPanel {
 }
