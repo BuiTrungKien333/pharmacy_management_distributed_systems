@@ -2,13 +2,8 @@ package com.pharmacy.app;
 
 import com.pharmacy.mapper.DataMapper;
 import com.pharmacy.network.PharmacySocketServer;
-import com.pharmacy.repository.AccountRepository;
-import com.pharmacy.repository.AuthorizationRepository;
-import com.pharmacy.repository.DashboardRepository;
-import com.pharmacy.repository.MedicineRepository;
-import com.pharmacy.service.impl.AuthServiceImpl;
-import com.pharmacy.service.impl.DashboardServiceImpl;
-import com.pharmacy.service.impl.MedicineServiceImpl;
+import com.pharmacy.repository.*;
+import com.pharmacy.service.impl.*;
 import com.pharmacy.shared.config.AppConfig;
 import com.pharmacy.util.HibernateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +25,15 @@ public class ServerApp {
         AuthorizationRepository authorizationRepository = new AuthorizationRepository();
         MedicineRepository medicineRepository = new MedicineRepository();
         DashboardRepository dashboardRepository = new DashboardRepository();
+        BatchRepository batchRepository = new BatchRepository();
+        SupplierRepository supplierRepository = new SupplierRepository();
 
         Map<String, Object> serviceRegistry = new HashMap<>();
         serviceRegistry.put("MedicineService", new MedicineServiceImpl(medicineRepository, DataMapper.INSTANCE));
         serviceRegistry.put("AuthService", new AuthServiceImpl(accountRepository, authorizationRepository));
         serviceRegistry.put("DashboardService", new DashboardServiceImpl(dashboardRepository));
+        serviceRegistry.put("BatchService", new BatchServiceImpl(batchRepository));
+        serviceRegistry.put("SupplierService", new SupplierServiceImpl(supplierRepository));
 
         log.info("Loading network configuration.");
         int port = AppConfig.getInt("server.port");

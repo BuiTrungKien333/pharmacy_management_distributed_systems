@@ -122,7 +122,7 @@ public class MainUI extends JLayeredPane {
                             if (batchUI == null)
                                 batchUI = new BatchUI();
                             else
-                                batchUI.refreshDataShipment();
+                                batchUI.refreshData();
 
                             ClientApp.showForm(batchUI);
                         }
