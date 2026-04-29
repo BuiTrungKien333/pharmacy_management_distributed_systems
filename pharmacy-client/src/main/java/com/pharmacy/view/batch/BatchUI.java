@@ -15,6 +15,7 @@ import com.pharmacy.shared.util.enums.MedicineType;
 import com.pharmacy.util.*;
 import com.toedter.calendar.JDateChooser;
 import net.miginfocom.swing.MigLayout;
+import raven.modal.Toast;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -58,6 +59,8 @@ public class BatchUI extends JPanel {
 
     private JDateChooser dateTo;
 
+    private Translator lang = Translator.getInstance();
+
     private boolean useSearchBySoLo = true;
 
     private int type = 0; // tất cả: 0, đang lưu hành: 1, đã huỷ: 2, đã bán hết: 3, 4: đã hết hạn
@@ -88,12 +91,9 @@ public class BatchUI extends JPanel {
 
         applyPermissions();
 
-        Translator.getInstance().addLanguageChangeListener(locale -> {
-            SwingUtilities.invokeLater(this::updateTexts);
-        });
+        Translator.getInstance().addLanguageChangeListener(locale -> SwingUtilities.invokeLater(this::updateTexts));
 
         updateTexts();
-
         initEvent();
 
         loadRefreshDataToDb();
@@ -245,6 +245,16 @@ public class BatchUI extends JPanel {
         LocalDate startDate = batchService.convertStringToLocalDate(filter, txtTimeStart.getText());
         LocalDate endDate = batchService.convertStringToLocalDate(filter, txtTimeEnd.getText());
 
+        if (filter == 4) {
+            if (startDate == null || endDate == null)
+                return;
+
+            if (startDate.isAfter(endDate)) {
+                Toast.show(this, Toast.Type.ERROR, "Ngày bắt đầu không được lớn hơn ngày kết thúc!");
+                return;
+            }
+        }
+
         List<BatchResponse> list = batchService.getAllBatchToExportCSV(type, filter, startDate, endDate, option);
         String[] headers = {"Số lô", "Barcode - Tên thuốc", "Nhà cung cấp", "Nhân viên nhập", "Ngày sản xuất",
                 "Hạn sử dụng", "Ngày nhập", "Số lượng nhập", "DVT", "Giá nhập", "Thành tiền", "Số lượng còn", "Giá bán",
@@ -288,6 +298,16 @@ public class BatchUI extends JPanel {
         LocalDate startDate = batchService.convertStringToLocalDate(filter, txtTimeStart.getText());
         LocalDate endDate = batchService.convertStringToLocalDate(filter, txtTimeEnd.getText());
 
+        if (filter == 4) {
+            if (startDate == null || endDate == null)
+                return;
+
+            if (startDate.isAfter(endDate)) {
+                Toast.show(this, Toast.Type.ERROR, "Ngày bắt đầu không được lớn hơn ngày kết thúc!");
+                return;
+            }
+        }
+
         String keyword = useSearchBySoLo ? txtSearchSoLo.getText() : txtSearchMaSP.getText();
 
         // Bước 1: tính tổng record
@@ -328,13 +348,20 @@ public class BatchUI extends JPanel {
     }
 
     public void showPage(int pageNum) {
-        if (pageNum == 0 || pageNum > pagination.getTotalPages())
-            pageNum = 1;
-
         pagination.setPageNumber(pageNum);
 
         LocalDate startDate = batchService.convertStringToLocalDate(filter, txtTimeStart.getText());
         LocalDate endDate = batchService.convertStringToLocalDate(filter, txtTimeEnd.getText());
+
+        if (filter == 4) {
+            if (startDate == null || endDate == null)
+                return;
+
+            if (startDate.isAfter(endDate)) {
+                Toast.show(this, Toast.Type.ERROR, "Ngày bắt đầu không được lớn hơn ngày kết thúc!");
+                return;
+            }
+        }
 
         String keyword = useSearchBySoLo ? txtSearchSoLo.getText() : txtSearchMaSP.getText();
 
@@ -349,8 +376,6 @@ public class BatchUI extends JPanel {
     }
 
     private void updateTexts() {
-        Translator lang = Translator.getInstance();
-
         lblHeaderSoLo.setText(lang.getString("batch.lbl.batch"));
         lblHeaderProd.setText(lang.getString("batch.lbl.product"));
         lblHeaderNgayNhap.setText(lang.getString("batch.lbl.entry_date"));
@@ -803,7 +828,7 @@ public class BatchUI extends JPanel {
         pnlBody.add(lblThanhTien);
         pnlBody.add(txtThanhTien);
 
-        JButton btn = new JButton("Save");
+        JButton btn = new JButton(lang.getString("batch.btn.save"));
         btn.setPreferredSize(new Dimension(80, 30));
         btn.setMinimumSize(new Dimension(80, 30));
         btn.setMaximumSize(new Dimension(80, 30));
@@ -842,10 +867,7 @@ public class BatchUI extends JPanel {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                txtThanhTien.setText(String
-                        .valueOf(FormatUtil.formatVND(
-                                batchService.calculateMoney(txtSoLuongNhap.getText(), txtGiaNhap.getText())))
-                        + " VND");
+                txtThanhTien.setText(FormatUtil.formatVND(batchService.calculateMoney(txtSoLuongNhap.getText(), txtGiaNhap.getText())) + " VND");
 
                 suggestGiaBan();
             }
@@ -874,10 +896,7 @@ public class BatchUI extends JPanel {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                txtThanhTien.setText(String
-                        .valueOf(FormatUtil.formatVND(
-                                batchService.calculateMoney(txtSoLuongNhap.getText(), txtGiaNhap.getText())))
-                        + " VND");
+                txtThanhTien.setText(FormatUtil.formatVND(batchService.calculateMoney(txtSoLuongNhap.getText(), txtGiaNhap.getText())) + " VND");
 
                 suggestGiaBan();
             }
@@ -891,18 +910,18 @@ public class BatchUI extends JPanel {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                txtThanhTien.setText(String
-                        .valueOf(FormatUtil.formatVND(
-                                batchService.calculateMoney(txtSoLuongNhap.getText(), txtGiaNhap.getText())))
-                        + " VND");
+                txtThanhTien.setText(
+                        FormatUtil.formatVND(
+                                batchService.calculateMoney(txtSoLuongNhap.getText(), txtGiaNhap.getText()))
+                                + " VND");
             }
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                txtThanhTien.setText(String
-                        .valueOf(FormatUtil.formatVND(
-                                batchService.calculateMoney(txtSoLuongNhap.getText(), txtGiaNhap.getText())))
-                        + " VND");
+                txtThanhTien.setText(
+                        FormatUtil.formatVND(
+                                batchService.calculateMoney(txtSoLuongNhap.getText(), txtGiaNhap.getText()))
+                                + " VND");
             }
 
             @Override
@@ -917,8 +936,8 @@ public class BatchUI extends JPanel {
     }
 
     private void updateBatch(BatchAllResponse batch, JTextField txtNgaySX, JTextField txtHanSuDung,
-                                JComboBox<String> cboTrangThai, JComboBox<SupplierMiniResponse> cmbNCC, JTextField txtSoLuongNhap,
-                                JTextField txtSoLuongCon, JTextField txtGiaNhap, JTextField txtGiaBan) {
+                             JComboBox<String> cboTrangThai, JComboBox<SupplierMiniResponse> cmbNCC, JTextField txtSoLuongNhap,
+                             JTextField txtSoLuongCon, JTextField txtGiaNhap, JTextField txtGiaBan) {
 
         if (cboTrangThai.getItemCount() == 1) {
             JOptionPane.showMessageDialog(this, "Lô thuốc này không thể cập nhật vì đã bán hết hoặc đã hết hạn.");
@@ -931,16 +950,11 @@ public class BatchUI extends JPanel {
 
             batchService.checkDate(ngaySX, hanSD);
 
-            long months = ChronoUnit.MONTHS.between(LocalDate.now(), hanSD);
-            if (months <= 18) {
-                int confirm = JOptionPane.showConfirmDialog(this, "Hạn sử dụng của lô thuốc này chỉ còn: " + months
-                        + " tháng.\n Bạn có chắc chắn muốn nhập lô ?");
-                if (confirm != JOptionPane.YES_OPTION)
-                    return;
-            }
-
             BatchUpdateRequest request = new BatchUpdateRequest();
 
+            request.setId(batch.getId());
+            request.setMedicineId(batch.getMedicine().getId());
+            request.setEmployeeId(batch.getEmployee().getId());
             request.setManufacturingDate(ngaySX);
             request.setExpirationDate(hanSD);
             request.setSupplierId(((SupplierMiniResponse) cmbNCC.getSelectedItem()).getId());

@@ -16,4 +16,9 @@ public class SupplierMiniResponse implements Serializable {
     private Long id;
     private String factoryCode;
     private String supplierName;
+
+    public String toString() {
+        String str = String.format("%s - %s", factoryCode, supplierName);
+        return str.length() > 90 ? str.substring(0, 90) + "..." : str;
+    }
 }

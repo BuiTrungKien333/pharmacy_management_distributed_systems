@@ -141,7 +141,6 @@ public class BatchServiceImpl implements BatchService {
     @Override
     public int countRecordFilteredByStatusAndDate(int type, int filter, LocalDate dateFrom, LocalDate toDate) {
         validateType(type);
-        validateDateFilter(filter, dateFrom, toDate);
 
         BatchStatus batchStatus = mapTypeToBatchStatus(type);
         return JpaTransactionTemplate.execute(em ->
@@ -154,10 +153,9 @@ public class BatchServiceImpl implements BatchService {
         validatePagination(page);
         validateSortOption(sortOption);
         validateType(type);
-        validateDateFilter(filter, fromDate, toDate);
 
         BatchStatus batchStatus = mapTypeToBatchStatus(type);
-        return JpaTransactionTemplate.execute(em -> batchRepository.findFilteredByStatusAndDate(
+        List<BatchResponse> execute = JpaTransactionTemplate.execute(em -> batchRepository.findFilteredByStatusAndDate(
                 em,
                 page.getSkip(),
                 page.getPageSize(),
@@ -167,12 +165,13 @@ public class BatchServiceImpl implements BatchService {
                 toDate,
                 sortOption
         ));
+        execute.forEach(System.out::println);
+        return execute;
     }
 
     @Override
     public int countRecordFilteredByStatusAndDateAndSearchByBatchNumber(int type, int filter, LocalDate dateFrom, LocalDate toDate, String keyword) {
         validateType(type);
-        validateDateFilter(filter, dateFrom, toDate);
 
         BatchStatus batchStatus = mapTypeToBatchStatus(type);
         String normalizedKeyword = normalize(keyword);
@@ -194,7 +193,6 @@ public class BatchServiceImpl implements BatchService {
         validatePagination(page);
         validateSortOption(sortOption);
         validateType(type);
-        validateDateFilter(filter, fromDate, toDate);
 
         BatchStatus batchStatus = mapTypeToBatchStatus(type);
         String normalizedKeyword = normalize(keyword);
@@ -217,7 +215,6 @@ public class BatchServiceImpl implements BatchService {
     @Override
     public int countRecordFilteredByStatusAndDateAndSearchByBarcode(int type, int filter, LocalDate dateFrom, LocalDate toDate, String barcode) {
         validateType(type);
-        validateDateFilter(filter, dateFrom, toDate);
 
         BatchStatus batchStatus = mapTypeToBatchStatus(type);
         String normalizedBarcode = normalize(barcode);
@@ -239,7 +236,6 @@ public class BatchServiceImpl implements BatchService {
         validatePagination(page);
         validateSortOption(sortOption);
         validateType(type);
-        validateDateFilter(filter, fromDate, toDate);
 
         BatchStatus batchStatus = mapTypeToBatchStatus(type);
         String normalizedBarcode = normalize(barcode);
@@ -376,21 +372,6 @@ public class BatchServiceImpl implements BatchService {
     private void validateType(int type) {
         if (type < 0 || type > 4) {
             throw new IllegalArgumentException("type chỉ nhận từ 0 đến 4.");
-        }
-    }
-
-    private void validateDateFilter(int filter, LocalDate fromDate, LocalDate toDate) {
-        if (filter < 0 || filter > 7) {
-            throw new IllegalArgumentException("filter chỉ nhận từ 0 đến 7.");
-        }
-
-        if (filter == 4) {
-            if (fromDate == null || toDate == null) {
-                throw new IllegalArgumentException("fromDate và toDate không được để trống");
-            }
-            if (fromDate.isAfter(toDate)) {
-                throw new IllegalArgumentException("fromDate không được lớn hơn toDate.");
-            }
         }
     }
 }
