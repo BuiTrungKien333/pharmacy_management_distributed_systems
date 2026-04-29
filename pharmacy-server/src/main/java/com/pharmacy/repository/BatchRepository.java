@@ -327,7 +327,7 @@ public class BatchRepository {
                                            int filter,
                                            LocalDate dateFrom,
                                            LocalDate toDate) {
-        if(filter == 0) return;
+        if (filter == 0) return;
 
         LocalDate today = LocalDate.now();
         switch (filter) {
@@ -377,5 +377,19 @@ public class BatchRepository {
             jpql.append(" and m.barcode like :barcodeKeyword");
             params.put("barcodeKeyword", "%" + barcodeKeyword + "%");
         }
+    }
+
+    public void deductBatchQuantity(EntityManager em, String batchNumber, int sellingQuantity) {
+        String jpql = "update Batch b " +
+                "set b.remainingQuantity = coalesce(b.remainingQuantity - :sellingPrice, 0) " +
+                "where b.batchNumber = :batchNumber " +
+                "and b.batchStatus = :batchStatus " +
+                "and b.remainingQuantity >= 0";
+
+        em.createQuery(jpql)
+                .setParameter("sellingPrice", sellingQuantity)
+                .setParameter("batchNumber", batchNumber)
+                .setParameter("batchStatus", BatchStatus.SELLING)
+                .executeUpdate();
     }
 }

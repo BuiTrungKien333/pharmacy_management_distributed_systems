@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -47,5 +48,8 @@ public class Voucher {
 
     @Column(name = "total_discounted_amount")
     private double totalDiscountedAmount;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
 }

@@ -8,14 +8,12 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class EmployeeMiniResponse implements Serializable {
+@ToString
+public class CustomerMaxResponse implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long id;
-    private String employeeCode;
     private String fullName;
-
-    public String getDisplayName() {
-        return employeeCode + " - " + fullName;
-    }
+    private String phoneNumber;
+    private int rewardPoints;
+    private CustomerRankResponse customerRank;
 }

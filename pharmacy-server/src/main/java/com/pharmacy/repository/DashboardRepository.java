@@ -94,7 +94,7 @@ public class DashboardRepository {
 
             Map<LocalDate, Double> result = new HashMap<>();
             for (Object[] row : rows) {
-                LocalDate day = ((Date) row[0]).toLocalDate();
+                LocalDate day = toLocalDate(row[0]);
                 double value = ((Number) row[1]).doubleValue();
                 result.put(day, value);
             }
@@ -119,7 +119,7 @@ public class DashboardRepository {
 
             Map<LocalDate, Integer> result = new HashMap<>();
             for (Object[] row : rows) {
-                LocalDate day = ((Date) row[0]).toLocalDate();
+                LocalDate day = toLocalDate(row[0]);
                 int value = ((Number) row[1]).intValue();
                 result.put(day, value);
             }
@@ -144,7 +144,7 @@ public class DashboardRepository {
 
             Map<LocalDate, Integer> result = new HashMap<>();
             for (Object[] row : rows) {
-                LocalDate day = ((Date) row[0]).toLocalDate();
+                LocalDate day = toLocalDate(row[0]);
                 int value = ((Number) row[1]).intValue();
                 result.put(day, value);
             }
@@ -153,5 +153,18 @@ public class DashboardRepository {
             log.error("event=dashboard_get_return_invoice_count_by_date_range_failed errorMessage={}", e.getMessage());
             throw e;
         }
+    }
+
+    private LocalDate toLocalDate(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof LocalDate localDate) {
+            return localDate;
+        }
+        if (value instanceof Date date) {
+            return date.toLocalDate();
+        }
+        throw new IllegalArgumentException("Unsupported date value type: " + value.getClass().getName());
     }
 }

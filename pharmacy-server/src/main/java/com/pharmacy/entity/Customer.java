@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = "customerRank")
+@Builder
 @Entity
 @Table(name = "tbl_customer")
 public class Customer extends BaseEntity {
