@@ -17,6 +17,10 @@ import java.time.LocalDateTime;
 @Table(name = "tbl_batch")
 public class Batch extends BaseEntity {
 
+	/*
+	Pattern: LO-{medicineId}-{yyMMdd}-{seq}
+	Ví dụ: LO-15-260420-003
+	 */
 	@Column(name = "batch_number", length = 100, unique = true)
 	private String batchNumber;
 

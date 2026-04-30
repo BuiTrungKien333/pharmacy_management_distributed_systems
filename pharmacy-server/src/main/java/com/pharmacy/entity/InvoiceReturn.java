@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = { "invoice", "customer", "employee" })
+@Builder
 @Entity
 @Table(name = "tbl_invoice_return")
 public class InvoiceReturn {

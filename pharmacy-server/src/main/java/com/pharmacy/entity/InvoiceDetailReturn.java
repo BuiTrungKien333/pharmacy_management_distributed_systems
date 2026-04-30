@@ -7,6 +7,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ToString(exclude = {"batch", "product", "invoiceReturn"})
 @Entity
 @Table(name = "tbl_invoice_detail_return")
@@ -39,11 +40,4 @@ public class InvoiceDetailReturn {
 
     @Column(name = "status")
     private boolean status;
-
-    @Column(name = "resolution", columnDefinition = "VARCHAR(255)")
-    private String resolution;
-
-    @Column(name = "reason", columnDefinition = "VARCHAR(255)")
-    private String reason;
-
 }

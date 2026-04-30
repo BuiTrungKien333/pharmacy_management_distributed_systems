@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"invoice", "product", "batch"})
+@Builder
 @Entity
 @Table(name = "tbl_invoice_detail")
 public class InvoiceDetail {
@@ -36,5 +37,9 @@ public class InvoiceDetail {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "batch_number")
     private Batch batch;
+
+    public void setTotalAmount() {
+        this.totalAmount = this.unitPrice * this.quantity;
+    }
 
 }

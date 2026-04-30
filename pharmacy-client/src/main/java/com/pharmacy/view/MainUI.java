@@ -7,7 +7,8 @@ import com.pharmacy.app.ClientApp;
 import com.pharmacy.util.ClientSecurityContext;
 import com.pharmacy.util.Translator;
 import com.pharmacy.view.batch.BatchUI;
-import com.pharmacy.view.dashboard.DashBoardUI;
+import com.pharmacy.view.batch.InventoryUI;
+import com.pharmacy.view.dashboard.DashboardUI;
 import com.pharmacy.view.invoice.InvoiceUI;
 import com.pharmacy.view.medicine.MedicineUI;
 import com.pharmacy.view.menu.Menu;
@@ -80,7 +81,7 @@ public class MainUI extends JLayeredPane {
     private void initMenuEvent() {
         menu.addMenuEvent((int index, int subIndex, MenuAction action) -> {
             switch (index) {
-                case 0 -> ClientApp.showForm(new DashBoardUI());
+                case 0 -> ClientApp.showForm(new DashboardUI());
                 case 1 -> {
                     if (sellUI == null)
                         sellUI = new SellUI();
@@ -96,8 +97,8 @@ public class MainUI extends JLayeredPane {
                 case 3 -> {
                     if (medicineUI == null)
                         medicineUI = new MedicineUI();
-//                    else
-//                        medicineUI.refreshDataProd();
+                    else
+                        medicineUI.refreshDataProd();
 
                     ClientApp.showForm(medicineUI);
                 }
@@ -112,23 +113,23 @@ public class MainUI extends JLayeredPane {
 //
 //                    ClientApp.showForm(invoice);
 //                }
-//                case 5 -> {
-//                    switch (subIndex) {
-//                        case 1 -> {
-//                            if (!Auth.hasPermission("BATCH_VIEW"))
-//                                return;
-//
-//                            if (batch == null)
-//                                batch = new BatchGUI();
-//                            else
-//                                batch.refreshDataShipment();
-//
-//                            ClientApp.showForm(batch);
-//                        }
-//                        case 2 -> ClientApp.showForm(new InventoryGUI());
-//                        default -> action.cancel();
-//                    }
-//                }
+                case 5 -> {
+                    switch (subIndex) {
+                        case 1 -> {
+                            if (!ClientSecurityContext.hasPermission("BATCH_VIEW"))
+                                return;
+
+                            if (batchUI == null)
+                                batchUI = new BatchUI();
+                            else
+                                batchUI.refreshData();
+
+                            ClientApp.showForm(batchUI);
+                        }
+                        case 2 -> ClientApp.showForm(new InventoryUI());
+                        default -> action.cancel();
+                    }
+                }
 //                case 6 -> {
 //                    if (!Auth.hasPermission("SUPPLIER_MANAGE"))
 //                        return;

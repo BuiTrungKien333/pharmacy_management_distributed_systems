@@ -43,6 +43,8 @@ public class ServerConnection {
             request.setParameterTypes(paramTypes);
             request.setParameters(args);
 
+            // Ensure updated objects (e.g., Pagination) are re-serialized each call.
+            out.reset();
             out.writeObject(request);
             out.flush();
 

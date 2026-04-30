@@ -23,6 +23,7 @@ public class ClientApp extends JFrame {
     private static ClientApp app;
 
     private final LoginUI loginUI;
+
     private final MainUI mainUI;
 
     public ClientApp() {

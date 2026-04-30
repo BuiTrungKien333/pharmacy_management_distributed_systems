@@ -2,13 +2,8 @@ package com.pharmacy.app;
 
 import com.pharmacy.mapper.DataMapper;
 import com.pharmacy.network.PharmacySocketServer;
-import com.pharmacy.repository.AccountRepository;
-import com.pharmacy.repository.AuthorizationRepository;
-import com.pharmacy.repository.DashboardRepository;
-import com.pharmacy.repository.MedicineRepository;
-import com.pharmacy.service.impl.AuthServiceImpl;
-import com.pharmacy.service.impl.DashboardServiceImpl;
-import com.pharmacy.service.impl.MedicineServiceImpl;
+import com.pharmacy.repository.*;
+import com.pharmacy.service.impl.*;
 import com.pharmacy.shared.config.AppConfig;
 import com.pharmacy.util.HibernateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +25,26 @@ public class ServerApp {
         AuthorizationRepository authorizationRepository = new AuthorizationRepository();
         MedicineRepository medicineRepository = new MedicineRepository();
         DashboardRepository dashboardRepository = new DashboardRepository();
+        BatchRepository batchRepository = new BatchRepository();
+        SupplierRepository supplierRepository = new SupplierRepository();
+        SellRepository sellRepository = new SellRepository();
+        CustomerRepository customerRepository = new CustomerRepository();
+        VoucherRepository voucherRepository = new VoucherRepository();
+        InvoiceRepository invoiceRepository = new InvoiceRepository();
+        InvoiceDetailRepository invoiceDetailRepository = new InvoiceDetailRepository();
+        RefundRepository refundRepository = new RefundRepository();
+        RefundDetailRepository refundDetailRepository = new RefundDetailRepository();
 
         Map<String, Object> serviceRegistry = new HashMap<>();
         serviceRegistry.put("MedicineService", new MedicineServiceImpl(medicineRepository, DataMapper.INSTANCE));
         serviceRegistry.put("AuthService", new AuthServiceImpl(accountRepository, authorizationRepository));
         serviceRegistry.put("DashboardService", new DashboardServiceImpl(dashboardRepository));
+        serviceRegistry.put("BatchService", new BatchServiceImpl(batchRepository));
+        serviceRegistry.put("SupplierService", new SupplierServiceImpl(supplierRepository));
+        serviceRegistry.put("SellService", new SellServiceImpl(sellRepository, customerRepository, voucherRepository, invoiceRepository, invoiceDetailRepository, batchRepository));
+        serviceRegistry.put("CustomerService", new CustomerServiceImpl(customerRepository));
+        serviceRegistry.put("VoucherService", new VoucherServiceImpl(voucherRepository));
+        serviceRegistry.put("RefundService", new RefundServiceImpl(refundRepository, refundDetailRepository, batchRepository));
 
         log.info("Loading network configuration.");
         int port = AppConfig.getInt("server.port");
