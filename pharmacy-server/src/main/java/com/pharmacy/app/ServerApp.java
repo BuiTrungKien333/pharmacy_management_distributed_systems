@@ -32,6 +32,8 @@ public class ServerApp {
         VoucherRepository voucherRepository = new VoucherRepository();
         InvoiceRepository invoiceRepository = new InvoiceRepository();
         InvoiceDetailRepository invoiceDetailRepository = new InvoiceDetailRepository();
+        RefundRepository refundRepository = new RefundRepository();
+        RefundDetailRepository refundDetailRepository = new RefundDetailRepository();
 
         Map<String, Object> serviceRegistry = new HashMap<>();
         serviceRegistry.put("MedicineService", new MedicineServiceImpl(medicineRepository, DataMapper.INSTANCE));
@@ -42,6 +44,7 @@ public class ServerApp {
         serviceRegistry.put("SellService", new SellServiceImpl(sellRepository, customerRepository, voucherRepository, invoiceRepository, invoiceDetailRepository, batchRepository));
         serviceRegistry.put("CustomerService", new CustomerServiceImpl(customerRepository));
         serviceRegistry.put("VoucherService", new VoucherServiceImpl(voucherRepository));
+        serviceRegistry.put("RefundService", new RefundServiceImpl(refundRepository, refundDetailRepository, batchRepository));
 
         log.info("Loading network configuration.");
         int port = AppConfig.getInt("server.port");

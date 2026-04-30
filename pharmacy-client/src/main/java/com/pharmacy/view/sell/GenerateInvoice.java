@@ -105,7 +105,7 @@ public class GenerateInvoice extends JDialog {
             BufferedImage img = QRGenerator.generateQRCodeImage(invoice.getInvoiceCode(), 120, 120);
             lblQRCode.setIcon(new ImageIcon(img));
         } catch (Exception e) {
-            e.printStackTrace(); // TODO: handle exception
+            e.printStackTrace();
         }
     }
 

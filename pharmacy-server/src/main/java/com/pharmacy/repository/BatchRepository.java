@@ -392,4 +392,9 @@ public class BatchRepository {
                 .setParameter("batchStatus", BatchStatus.SELLING)
                 .executeUpdate();
     }
+
+    public void updateQuantityWhenApproveInvoiceRefund(EntityManager em, Long batchId, int newQty) {
+        String jpql = "update Batch b set b.remainingQuantity = b.remainingQuantity + :qty where b.id =:batchId";
+        em.createQuery(jpql).setParameter("batchId", batchId).setParameter("qty", newQty).executeUpdate();
+    }
 }

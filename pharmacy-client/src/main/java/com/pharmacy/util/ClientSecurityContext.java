@@ -1,5 +1,7 @@
 package com.pharmacy.util;
 
+import com.pharmacy.shared.dto.response.EmployeeMiniResponse;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +30,14 @@ public final class ClientSecurityContext {
 
     public static synchronized void clear() {
         permissions.clear();
+    }
+
+    public static EmployeeMiniResponse getCurrentUser() {
+        return EmployeeMiniResponse.builder()
+                .id(3L)
+                .employeeCode("ALA010001")
+                .fullName("Bùi Trung Kiên")
+                .build();
     }
 }
 

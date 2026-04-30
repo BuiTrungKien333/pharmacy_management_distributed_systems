@@ -9,23 +9,15 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @ToString
-public class InvoiceResponse implements Serializable {
+@Builder
+public class InvoiceRefundResponse implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String invoiceCode;
-
-    private CustomerResponse customer;
-
-    private EmployeeMiniResponse employee;
-
+    private String returnInvoiceCode;
     private LocalDateTime createdDate;
-
-    private double totalGoodsAmount;
-
-    private double totalPayableAmount;
-
-    private boolean returned;
-
+    private double refundAmount;
+    private String reason;
+    private CustomerResponse customer;
+    private EmployeeMiniResponse employee;
 }
