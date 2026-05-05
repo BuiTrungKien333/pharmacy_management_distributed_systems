@@ -40,4 +40,10 @@ public class InvoiceDetailReturn {
 
     @Column(name = "status")
     private boolean status;
+
+    @Column(name = "reason")
+    private String reason;
+
+    @Column(name = "resolution")
+    private String resolution;
 }

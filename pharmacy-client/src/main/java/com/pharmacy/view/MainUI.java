@@ -102,17 +102,17 @@ public class MainUI extends JLayeredPane {
 
                     ClientApp.showForm(medicineUI);
                 }
-//                case 4 -> {
-//                    if (!Auth.hasPermission("INVOICE_VIEW"))
-//                        return;
-//
-//                    if (invoice == null)
-//                        invoice = new InvoiceGUI();
-//                    else
-//                        invoice.refreshData();
-//
-//                    ClientApp.showForm(invoice);
-//                }
+                case 4 -> {
+                    if (!ClientSecurityContext.hasPermission("INVOICE_VIEW"))
+                        return;
+
+                    if (invoiceUI == null)
+                        invoiceUI = new InvoiceUI();
+                    else
+                        invoiceUI.refreshData();
+
+                    ClientApp.showForm(invoiceUI);
+                }
                 case 5 -> {
                     switch (subIndex) {
                         case 1 -> {

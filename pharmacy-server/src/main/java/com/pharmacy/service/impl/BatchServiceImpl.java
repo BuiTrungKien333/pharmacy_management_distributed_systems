@@ -24,6 +24,7 @@ import java.util.List;
 public class BatchServiceImpl implements BatchService {
 
     private static final DateTimeFormatter BATCH_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyMMdd");
+    private static final DateTimeFormatter UI_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final BatchRepository batchRepository;
 
@@ -165,7 +166,6 @@ public class BatchServiceImpl implements BatchService {
                 toDate,
                 sortOption
         ));
-        execute.forEach(System.out::println);
         return execute;
     }
 
@@ -271,13 +271,20 @@ public class BatchServiceImpl implements BatchService {
 
     @Override
     public LocalDate convertStringToLocalDate(int filter, String text) {
-        if (filter != 4)
+        if (filter != 4) {
             return LocalDate.now();
+        }
 
-        if (text.isBlank())
+        if (text == null || text.isBlank()) {
             return null;
+        }
 
-        return LocalDate.parse(text);
+        String trimmed = text.trim();
+        if (trimmed.contains("/")) {
+            return LocalDate.parse(trimmed, UI_DATE_FORMATTER);
+        }
+
+        return LocalDate.parse(trimmed);
     }
 
     @Override

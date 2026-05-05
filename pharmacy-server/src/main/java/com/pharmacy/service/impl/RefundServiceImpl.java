@@ -128,31 +128,50 @@ public class RefundServiceImpl implements RefundService {
                         .build();
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("event=process_invoice_refund_failed errorMessage={}", e.getMessage(), e);
+            throw e;
         }
-        return null;
     }
 
     @Override
     public boolean approveInvoiceRefund(List<InvoiceDetailRefundRequest> list) {
-        if (list.isEmpty())
+        if (list == null || list.isEmpty()) {
             return false;
+        }
 
         return JpaTransactionTemplate.execute(em -> {
             String invoiceRefundCode = list.get(0).getInvoiceRefundCode();
-
-            refundRepository.updateStatusApporvOfInvoiceRefund(em, invoiceRefundCode);
-
-            for (InvoiceDetailRefundRequest request : list) {
-                refundDetailRepository.update(em, request);
-
-                int newQty = "Bán tiếp".equals(request.getResolution()) ? request.getQuantity() : 0;
-                if (newQty > 0) {
-                    batchRepository.updateQuantityWhenApproveInvoiceRefund(em, request.getBatchId(), newQty);
-                }
+            if (invoiceRefundCode == null || invoiceRefundCode.isBlank()) {
+                throw new IllegalArgumentException("Mã phiếu trả không được để trống.");
             }
 
-            return true;
+            try {
+                refundRepository.updateStatusApporvOfInvoiceRefund(em, invoiceRefundCode);
+
+                for (InvoiceDetailRefundRequest request : list) {
+                    if (request == null) {
+                        log.warn("event=invoice_refund_approve_skip_null_request invoiceRefundCode={}", invoiceRefundCode);
+                        continue;
+                    }
+
+                    refundDetailRepository.update(em, request);
+
+                    int newQty = "Bán tiếp".equals(request.getResolution()) ? request.getQuantity() : 0;
+                    System.out.println(request);
+                    System.out.println(request.getResolution());
+                    System.out.println(newQty);
+                    System.out.println("-------------");
+                    if (newQty > 0) {
+                        batchRepository.updateQuantityWhenApproveInvoiceRefund(em, request.getBatchId(), newQty);
+                    }
+                }
+
+                return true;
+            } catch (Exception e) {
+                log.error("event=invoice_refund_approve_failed invoiceRefundCode={} errorMessage={}",
+                        invoiceRefundCode, e.getMessage(), e);
+                throw e;
+            }
         });
     }
 }

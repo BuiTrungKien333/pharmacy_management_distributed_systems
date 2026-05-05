@@ -24,4 +24,5 @@ public class InvoiceDetailResponse implements Serializable {
     public void setTotalAmount() {
         this.totalAmount = this.quantity * this.unitPrice;
     }
+
 }
