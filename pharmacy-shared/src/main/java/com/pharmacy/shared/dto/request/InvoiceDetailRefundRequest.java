@@ -30,6 +30,8 @@ public class InvoiceDetailRefundRequest implements Serializable {
 
     private String resolution;
 
+    private String reason;
+
     public void setTotalAmount() {
         this.totalAmount = this.quantity * this.unitPrice;
     }

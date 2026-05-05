@@ -129,11 +129,21 @@ public class RefundRepository {
 
     public void updateStatusReturnOfInvoice(EntityManager em, String invoiceCode) {
         String jpql = "update Invoice i set i.returned = true where i.invoiceCode =: invoiceCode";
-        em.createQuery(jpql).setParameter("invoiceCode", invoiceCode).executeUpdate();
+        try {
+            em.createQuery(jpql).setParameter("invoiceCode", invoiceCode).executeUpdate();
+        } catch (Exception e) {
+            log.error("event=refund_update_invoice_return_status_failed invoiceCode={} errorMessage={}", invoiceCode, e.getMessage());
+            throw e;
+        }
     }
 
     public void updateStatusApporvOfInvoiceRefund(EntityManager em, String invoiceRefundCode) {
         String jpql = "update InvoiceReturn i set i.approved = true where i.returnInvoiceCode =: invoiceRefundCode";
-        em.createQuery(jpql).setParameter("invoiceRefundCode", invoiceRefundCode).executeUpdate();
+        try {
+            em.createQuery(jpql).setParameter("invoiceRefundCode", invoiceRefundCode).executeUpdate();
+        } catch (Exception e) {
+            log.error("event=refund_update_approve_status_failed invoiceRefundCode={} errorMessage={}", invoiceRefundCode, e.getMessage());
+            throw e;
+        }
     }
 }

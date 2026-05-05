@@ -395,6 +395,15 @@ public class BatchRepository {
 
     public void updateQuantityWhenApproveInvoiceRefund(EntityManager em, Long batchId, int newQty) {
         String jpql = "update Batch b set b.remainingQuantity = b.remainingQuantity + :qty where b.id =:batchId";
-        em.createQuery(jpql).setParameter("batchId", batchId).setParameter("qty", newQty).executeUpdate();
+        try {
+            em.createQuery(jpql)
+                    .setParameter("batchId", batchId)
+                    .setParameter("qty", newQty)
+                    .executeUpdate();
+        } catch (Exception e) {
+            log.error("event=batch_update_qty_after_refund_approve_failed batchId={} qty={} errorMessage={}",
+                    batchId, newQty, e.getMessage(), e);
+            throw e;
+        }
     }
 }

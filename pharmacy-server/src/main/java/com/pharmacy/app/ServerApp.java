@@ -31,6 +31,7 @@ public class ServerApp {
         CustomerRepository customerRepository = new CustomerRepository();
         VoucherRepository voucherRepository = new VoucherRepository();
         InvoiceRepository invoiceRepository = new InvoiceRepository();
+        InvoiceRefundRepository invoiceRefundRepository = new InvoiceRefundRepository();
         InvoiceDetailRepository invoiceDetailRepository = new InvoiceDetailRepository();
         RefundRepository refundRepository = new RefundRepository();
         RefundDetailRepository refundDetailRepository = new RefundDetailRepository();
@@ -45,6 +46,7 @@ public class ServerApp {
         serviceRegistry.put("CustomerService", new CustomerServiceImpl(customerRepository));
         serviceRegistry.put("VoucherService", new VoucherServiceImpl(voucherRepository));
         serviceRegistry.put("RefundService", new RefundServiceImpl(refundRepository, refundDetailRepository, batchRepository));
+        serviceRegistry.put("InvoiceService", new InvoiceServiceImpl(invoiceRepository, invoiceRefundRepository));
 
         log.info("Loading network configuration.");
         int port = AppConfig.getInt("server.port");

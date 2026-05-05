@@ -18,6 +18,8 @@ public class InvoiceRefundResponse implements Serializable {
     private LocalDateTime createdDate;
     private double refundAmount;
     private String reason;
+    private boolean approved;
     private CustomerResponse customer;
+    private InvoiceMiniResponse invoice;
     private EmployeeMiniResponse employee;
 }
