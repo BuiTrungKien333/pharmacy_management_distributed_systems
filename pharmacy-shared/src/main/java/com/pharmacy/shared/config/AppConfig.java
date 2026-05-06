@@ -2,6 +2,8 @@ package com.pharmacy.shared.config;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -9,17 +11,32 @@ import java.util.Properties;
 public class AppConfig {
 
     private static final Properties properties = new Properties();
+    private static final String CONFIG_FILE_NAME = "application.properties";
 
     static {
-        try (InputStream input = AppConfig.class.getClassLoader().getResourceAsStream("application.properties")) {
-            if (input == null) {
-                log.error("Configuration file 'application.properties' was not found on the classpath.");
-            } else {
+        // 1. Check if there is an external config file (at the same level as the working directory)
+        File externalConfigFile = new File(CONFIG_FILE_NAME);
+
+        if (externalConfigFile.exists() && !externalConfigFile.isDirectory()) {
+            // IF EXTERNAL FILE EXISTS: Prioritize loading from the File System
+            try (InputStream input = new FileInputStream(externalConfigFile)) {
                 properties.load(input);
-                log.info("Configuration loaded from 'application.properties'.");
+                log.info("Configuration loaded from EXTERNAL file: {}", externalConfigFile.getAbsolutePath());
+            } catch (Exception e) {
+                log.error("Failed to load configuration from external file.", e);
             }
-        } catch (Exception e) {
-            log.error("Failed to load configuration from 'application.properties'.", e);
+        } else {
+            // IF NOT EXISTS: Fallback to loading the default file packed inside the .jar (Classpath)
+            try (InputStream input = AppConfig.class.getClassLoader().getResourceAsStream(CONFIG_FILE_NAME)) {
+                if (input == null) {
+                    log.error("Configuration file '{}' was not found on the classpath either.", CONFIG_FILE_NAME);
+                } else {
+                    properties.load(input);
+                    log.info("Configuration loaded from INTERNAL classpath (inside .jar).");
+                }
+            } catch (Exception e) {
+                log.error("Failed to load configuration from classpath.", e);
+            }
         }
     }
 
