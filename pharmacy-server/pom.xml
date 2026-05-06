@@ -130,7 +130,7 @@
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.pharmacy.server.ServerApp</mainClass>
+                                    <mainClass>com.pharmacy.app.ServerApp</mainClass>
                                 </transformer>
                             </transformers>
                             <filters>
